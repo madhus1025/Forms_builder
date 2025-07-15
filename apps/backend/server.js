@@ -11,11 +11,11 @@ const submissionRoutes = require('./routes/submissionRoutes');
 const panVerifyRoute = require('./routes/panVerify'); //  PAN verification route
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4000;
 
 // CORS Configuration
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: true, // allow same origin
   credentials: true
 }));
 
@@ -37,6 +37,14 @@ mongoose.connect('mongodb://localhost:27017/adminpanel', {
 app.use('/api/forms', formRoutes);
 app.use('/api/submissions', submissionRoutes);
 app.use('/api', panVerifyRoute); // Use PAN verification route
+
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+// For any route not handled by API, serve index.html (for React Router)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
 
 // Health Check Route
 app.get('/', (req, res) => {

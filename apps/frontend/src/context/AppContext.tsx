@@ -35,13 +35,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentView, setCurrentView] = useState<'admin' | 'client'>('admin');
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/forms')
+    axios.get('/api/forms')
       .then(res => setForms(res.data))
       .catch(err => console.error('Error loading forms', err));
   }, []);
 
   const refreshSubmissions = () => {
-    axios.get('http://localhost:5000/api/submissions')
+    axios.get('/api/submissions')
       .then(res => setSubmissions(res.data))
       .catch(err => console.error('Error loading submissions', err));
   };
@@ -62,7 +62,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // ✅ Approve a submission
   const approveSubmission = async (submissionId: string) => {
     try {
-      await axios.patch(`http://localhost:5000/api/submissions/${submissionId}/approve`);
+      await axios.patch(`/api/submissions/${submissionId}/approve`);
       refreshSubmissions();
     } catch (err) {
       console.error('Error approving submission', err);
@@ -72,7 +72,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // ✅ Reject a submission
   const rejectSubmission = async (submissionId: string) => {
     try {
-      await axios.patch(`http://localhost:5000/api/submissions/${submissionId}/reject`);
+      await axios.patch(`/api/submissions/${submissionId}/reject`);
       refreshSubmissions();
     } catch (err) {
       console.error('Error rejecting submission', err);

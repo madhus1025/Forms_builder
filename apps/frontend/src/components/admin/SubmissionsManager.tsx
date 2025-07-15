@@ -21,7 +21,7 @@ export const SubmissionsManager: React.FC = () => {
 
   const handleApprove = async (id: string) => {
     try {
-      await axios.patch(`http://localhost:5000/api/submissions/${id}/approve`);
+      await axios.patch(`/api/submissions/${id}/approve`);
       alert('Submission approved successfully');
       refreshSubmissions();
       setSelectedSubmission(null);
@@ -33,7 +33,7 @@ export const SubmissionsManager: React.FC = () => {
 
   const handleReject = async (id: string) => {
     try {
-      await axios.patch(`http://localhost:5000/api/submissions/${id}/reject`);
+      await axios.patch(`/api/submissions/${id}/reject`);
       alert('Submission rejected successfully');
       refreshSubmissions();
       setSelectedSubmission(null);
@@ -95,7 +95,7 @@ export const SubmissionsManager: React.FC = () => {
                     <span className="font-medium text-gray-700">{key}</span>
                     {value && typeof value === 'object' && value.url ? (
                       <a
-                        href={`http://localhost:5000${value.url}`}
+                        href={`${value.url}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         download

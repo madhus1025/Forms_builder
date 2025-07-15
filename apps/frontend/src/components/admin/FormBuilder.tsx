@@ -99,7 +99,7 @@ const FormBuilder: React.FC = () => {
     };
 
     try {
-      await axios.post('http://localhost:5000/api/forms/create', formToSave);
+      await axios.post('/api/forms/create', formToSave);
       alert('Form saved successfully');
       setFormData({ name: '', description: '', category: '', fields: [] });
     } catch (error) {
@@ -110,7 +110,7 @@ const FormBuilder: React.FC = () => {
 
   const fetchLatestForm = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/forms/latest');
+      const res = await axios.get('/api/forms/latest');
       setFetchedForm(res.data.form);
     } catch (err) {
       console.error(err);

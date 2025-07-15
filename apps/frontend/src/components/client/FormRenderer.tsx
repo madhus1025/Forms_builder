@@ -100,7 +100,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ form, onBack }) => {
 
     if (panValue) {
       try {
-        const res = await axios.post('http://localhost:5000/api/verify-pan', {
+        const res = await axios.post('/api/verify-pan', {
           panNumber: panValue
         });
         if (!res.data.valid) {
@@ -119,7 +119,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ form, onBack }) => {
     formData.append('data', JSON.stringify(labeledData));
 
     try {
-      await axios.post('http://localhost:5000/api/submissions/submit', formData, {
+      await axios.post('/api/submissions/submit', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 

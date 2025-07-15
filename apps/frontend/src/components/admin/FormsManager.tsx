@@ -15,7 +15,7 @@ export const FormsManager: React.FC = () => {
   //  Fetch all forms
   const fetchForms = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/forms');
+      const res = await axios.get('/api/forms');
       setForms(res.data);
     } catch (error) {
       console.error('Error fetching forms:', error);
@@ -39,7 +39,7 @@ export const FormsManager: React.FC = () => {
   const handleDeleteForm = async (formId: string, formName: string) => {
     if (window.confirm(`Are you sure you want to delete "${formName}"? This action cannot be undone.`)) {
       try {
-        await axios.delete(`http://localhost:5000/api/forms/${formId}`);
+        await axios.delete(`/api/forms/${formId}`);
         setForms(prev => prev.filter(f => f._id !== formId));
         alert('Form deleted successfully');
       } catch (error) {
@@ -51,7 +51,7 @@ export const FormsManager: React.FC = () => {
 
   const handleViewForm = async (formId: string) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/forms/${formId}`);
+      const res = await axios.get(`/api/forms/${formId}`);
       setSelectedForm(res.data);
       setShowModal(true);
     } catch (error) {

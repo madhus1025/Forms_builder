@@ -25,8 +25,15 @@ app.use(bodyParser.json());
 //  Serve static files from the "uploads" directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+const username = "madhus1025";
+const password = encodeURIComponent("MEE@1357");
+const cluster = "financialservices.4nvyyjk.mongodb.net";
+const database = "financial_products";
+
+const mongoUri = `mongodb+srv://${username}:${password}@${cluster}/${database}?retryWrites=true&w=majority&appName=financialServices`;
+
 // MongoDB Connection
-mongoose.connect('mongodb://localhost:27017/adminpanel', {
+mongoose.connect(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })

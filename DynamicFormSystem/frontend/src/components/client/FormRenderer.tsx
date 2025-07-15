@@ -85,7 +85,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ form, onBack }) => {
       const value = formValues[field.id];
       if (value !== undefined) {
         if (field.type === 'file' && value instanceof File) {
-          formData.append(field.label, value); // file is sent using label
+          formData.append(field.label, value);
         } else {
           labeledData[field.label] = value;
         }
@@ -248,10 +248,10 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ form, onBack }) => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg border shadow">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold">{form.name}</h2>
-        <button onClick={onBack} className="flex items-center gap-2 text-blue-600">
+    <div className="max-w-2xl mx-auto bg-white p-4 sm:p-6 rounded-lg border shadow">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2 sm:gap-0">
+        <h2 className="text-lg sm:text-xl font-bold">{form.name}</h2>
+        <button onClick={onBack} className="flex items-center gap-2 text-blue-600 hover:underline text-sm">
           <ArrowLeft className="w-4 h-4" />
           Back
         </button>
@@ -272,7 +272,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ form, onBack }) => {
         <button
           type="submit"
           disabled={submitting}
-          className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-700"
+          className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-700 w-full sm:w-auto"
         >
           <Send className="w-4 h-4" />
           {submitting ? 'Submitting...' : 'Submit'}

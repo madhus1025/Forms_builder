@@ -13,6 +13,10 @@ interface AppContextType {
   addSubmission: (submission: FormSubmission) => void;
   getFormSubmissions: (formId: string) => FormSubmission[];
   refreshSubmissions: () => void;
+
+  // ✅ New functions to approve/reject
+  approveSubmission: (submissionId: string) => Promise<void>;
+  rejectSubmission: (submissionId: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -55,6 +59,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const addSubmission = (submission: FormSubmission) => setSubmissions(prev => [...prev, submission]);
   const getFormSubmissions = (formId: string) => submissions.filter(s => s.formId === formId);
 
+  // ✅ Approve a submission
+  const approveSubmission = async (submissionId: string) => {
+    try {
+      await axios.patch(`http://localhost:5000/api/submissions/${submissionId}/approve`);
+      refreshSubmissions();
+    } catch (err) {
+      console.error('Error approving submission', err);
+    }
+  };
+
+  // ✅ Reject a submission
+  const rejectSubmission = async (submissionId: string) => {
+    try {
+      await axios.patch(`http://localhost:5000/api/submissions/${submissionId}/reject`);
+      refreshSubmissions();
+    } catch (err) {
+      console.error('Error rejecting submission', err);
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -67,7 +91,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         deleteForm,
         addSubmission,
         getFormSubmissions,
-        refreshSubmissions
+        refreshSubmissions,
+        approveSubmission, // added
+        rejectSubmission,  // added
       }}
     >
       {children}

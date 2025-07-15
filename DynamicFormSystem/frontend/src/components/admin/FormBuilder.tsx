@@ -35,7 +35,7 @@ const FormBuilder: React.FC = () => {
     { value: 'radio', label: 'Radio Button' },
     { value: 'date', label: 'Date' },
     { value: 'file', label: 'File Upload' },
-    { value: 'pan', label: 'PAN Number' } // added PAN
+    { value: 'pan', label: 'PAN Number' }
   ];
 
   const addOption = () => {
@@ -136,12 +136,11 @@ const FormBuilder: React.FC = () => {
               <input type="file" className="border w-full px-3 py-2 rounded" disabled />
             ) : (
               <input
-  type="text"
-  className="border w-full px-3 py-2 rounded"
-  placeholder={field.placeholder || (field.type === 'text' ? 'Enter PAN Number' : '')}
-  disabled
-/>
-
+                type="text"
+                className="border w-full px-3 py-2 rounded"
+                placeholder={field.placeholder || (field.type === 'text' ? 'Enter PAN Number' : '')}
+                disabled
+              />
             )}
           </div>
         ))}
@@ -150,10 +149,10 @@ const FormBuilder: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Create New Form</h2>
-        <div className="flex space-x-3">
+    <div className="p-4 sm:p-6 max-w-full md:max-w-6xl mx-auto">
+      <div className="flex flex-wrap gap-3 justify-between items-center mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold">Create New Form</h2>
+        <div className="flex flex-wrap gap-2">
           <button onClick={() => setShowPreview(!showPreview)} className="border px-4 py-2 rounded flex items-center">
             <Eye className="w-4 h-4 mr-2" />
             {showPreview ? 'Hide Preview' : 'Show Preview'}
@@ -166,8 +165,8 @@ const FormBuilder: React.FC = () => {
       </div>
 
       {!showPreview && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4 w-full">
             <input
               type="text"
               placeholder="Form Name"
@@ -219,7 +218,7 @@ const FormBuilder: React.FC = () => {
 
               {['select', 'checkbox', 'radio'].includes(newField.type || '') && (
                 <div>
-                  <div className="flex gap-2 mb-2">
+                  <div className="flex flex-col sm:flex-row gap-2 mb-2">
                     <input
                       type="text"
                       placeholder="Option"
@@ -227,7 +226,7 @@ const FormBuilder: React.FC = () => {
                       onChange={(e) => setOptionInput(e.target.value)}
                       className="flex-1 border px-3 py-2 rounded"
                     />
-                    <button type="button" onClick={addOption} className="bg-green-500 text-white px-3 py-2 rounded">Add</button>
+                    <button type="button" onClick={addOption} className="bg-green-500 text-white px-3 py-2 rounded w-full sm:w-auto">Add</button>
                   </div>
                   <ul className="space-y-1">
                     {newField.options?.map((opt, idx) => (

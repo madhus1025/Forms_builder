@@ -11,22 +11,25 @@ export const AdminPanel: React.FC = () => {
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <Dashboard/>;
+        return <Dashboard />;
       case 'forms':
-        return <FormsManager/>;
+        return <FormsManager />;
       case 'create':
-        return <FormBuilder/>;
+        return <FormBuilder />;
       case 'submissions':
         return <SubmissionsManager />;
       default:
-        return <Dashboard/>;
+        return <Dashboard />;
     }
   };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      {/* Sidebar */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="flex-1 overflow-auto">
+
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-auto p-4 sm:p-6">
         {renderContent()}
       </div>
     </div>

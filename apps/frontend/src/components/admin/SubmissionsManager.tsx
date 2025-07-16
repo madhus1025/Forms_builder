@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, Eye, Calendar } from 'lucide-react';
+import { Search, Filter, Eye, Calendar, X } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import axios from 'axios';
 
@@ -22,7 +22,7 @@ export const SubmissionsManager: React.FC = () => {
   const handleApprove = async (id: string) => {
     try {
       await axios.patch(`/api/submissions/${id}/approve`);
-      alert('Submission approved successfully');
+      alert('Submission approved');
       refreshSubmissions();
       setSelectedSubmission(null);
     } catch (error) {
@@ -34,7 +34,7 @@ export const SubmissionsManager: React.FC = () => {
   const handleReject = async (id: string) => {
     try {
       await axios.patch(`/api/submissions/${id}/reject`);
-      alert('Submission rejected successfully');
+      alert('Submission rejected');
       refreshSubmissions();
       setSelectedSubmission(null);
     } catch (error) {
@@ -50,103 +50,89 @@ export const SubmissionsManager: React.FC = () => {
     if (!submission || !form) return null;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-        <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg sm:text-xl font-bold text-gray-900">Submission Details</h3>
+      <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">
+        <div className="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl p-6 relative">
+          <button
+            onClick={() => setSelectedSubmission(null)}
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          <h3 className="text-xl font-bold mb-2">Submission Details</h3>
+
+          {/* Form Info */}
+          <div className="bg-gray-50 p-4 rounded-lg mb-4 text-sm space-y-1">
+            <h4 className="font-medium text-gray-800 mb-1">Form Information</h4>
+            <p>Name: {submission.formName}</p>
+            <p>Category: {form.category}</p>
+            <p>Submitted At: {new Date(submission.submittedAt).toLocaleString()}</p>
+            <p>
+              Status:{' '}
+              <span
+                className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                  submission.status === 'approved'
+                    ? 'bg-green-100 text-green-700'
+                    : submission.status === 'rejected'
+                    ? 'bg-red-100 text-red-700'
+                    : 'bg-yellow-100 text-yellow-700'
+                }`}
+              >
+                {submission.status}
+              </span>
+            </p>
+          </div>
+
+          {/* Submitted Data */}
+          <div className="bg-gray-50 p-4 rounded-lg text-sm space-y-3">
+            <h4 className="font-medium text-gray-800 mb-2">Submitted Data</h4>
+            {Object.entries(submission.data).map(([key, value]) => (
+              <div key={key} className="flex flex-col">
+                <span className="font-medium text-gray-700">{key}</span>
+                {value && typeof value === 'object' && value.url ? (
+                  <a
+                    href={value.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download
+                    className="text-blue-600 underline mt-1"
+                  >
+                    📄 Download {value.originalname}
+                  </a>
+                ) : (
+                  <span className="text-gray-600 mt-1">
+                    {Array.isArray(value) ? value.join(', ') : String(value)}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="mt-6 flex justify-end space-x-3">
+            {submission.status === 'pending' ? (
+              <>
+                <button
+                  onClick={() => submission._id && handleReject(submission._id)}
+                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                >
+                  Reject
+                </button>
+                <button
+                  onClick={() => submission._id && handleApprove(submission._id)}
+                  className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                >
+                  Approve
+                </button>
+              </>
+            ) : null}
             <button
               onClick={() => setSelectedSubmission(null)}
-              className="text-gray-500 hover:text-gray-700"
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
             >
-              <Eye className="w-5 h-5" />
+              Close
             </button>
           </div>
-
-          <div className="space-y-4 text-sm">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h4 className="font-medium text-gray-900 mb-2">Form Information</h4>
-              <p className="text-gray-600">Name: {submission.formName}</p>
-              <p className="text-gray-600">Category: {form.category}</p>
-              <p className="text-gray-600">
-                Submitted: {new Date(submission.submittedAt).toLocaleDateString()} at{' '}
-                {new Date(submission.submittedAt).toLocaleTimeString()}
-              </p>
-              <p className="text-gray-600">
-                Status:{' '}
-                <span
-                  className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                    submission.status === 'approved'
-                      ? 'bg-green-100 text-green-800'
-                      : submission.status === 'rejected'
-                      ? 'bg-red-100 text-red-800'
-                      : 'bg-yellow-100 text-yellow-800'
-                  }`}
-                >
-                  {submission.status}
-                </span>
-              </p>
-            </div>
-
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h4 className="font-medium text-gray-900 mb-2">Submitted Data</h4>
-              <div className="space-y-3">
-                {Object.entries(submission.data).map(([key, value]) => (
-                  <div key={key} className="flex flex-col">
-                    <span className="font-medium text-gray-700">{key}</span>
-                    {value && typeof value === 'object' && value.url ? (
-                      <a
-                        href={`${value.url}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        download
-                        className="text-blue-600 underline mt-1"
-                      >
-                        📄 Download {value.originalname}
-                      </a>
-                    ) : (
-                      <span className="text-gray-600 mt-1">
-                        {Array.isArray(value) ? value.join(', ') : String(value)}
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {submission.status === 'pending' && (
-            <div className="mt-6 flex justify-end space-x-3">
-              <button
-                onClick={() => handleReject(submission._id!)}
-                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-              >
-                Reject
-              </button>
-              <button
-                onClick={() => handleApprove(submission._id!)}
-                className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-              >
-                Approve
-              </button>
-              <button
-                onClick={() => setSelectedSubmission(null)}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
-              >
-                Close
-              </button>
-            </div>
-          )}
-
-          {submission.status !== 'pending' && (
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => setSelectedSubmission(null)}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
-              >
-                Close
-              </button>
-            </div>
-          )}
         </div>
       </div>
     );
@@ -158,114 +144,118 @@ export const SubmissionsManager: React.FC = () => {
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Form Submissions</h2>
       </div>
 
+      {/* Search and Filters */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
             type="text"
-            placeholder="Search submissions..."
+            placeholder="Search form name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="w-full pl-10 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div className="relative">
-          <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
           <select
             value={filterForm}
             onChange={(e) => setFilterForm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="w-full pl-10 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Forms</option>
             {forms.map(form => (
-              <option key={form._id} value={form._id}>{form.name}</option>
+              <option key={form._id} value={form._id}>
+                {form.name}
+              </option>
             ))}
           </select>
         </div>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
             type="text"
-            placeholder="Search by status (pending, approved, rejected)"
+            placeholder="Search by status"
             value={statusSearchTerm}
             onChange={(e) => setStatusSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="w-full pl-10 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Form Name</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted At</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredSubmissions.map(submission => {
-                const form = getFormById(submission.formId);
-                return (
-                  <tr key={submission._id} className="hover:bg-gray-50">
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap font-medium text-gray-900">{submission.formName}</td>
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {form?.category || 'Unknown'}
-                      </span>
-                    </td>
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-600">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        {new Date(submission.submittedAt).toLocaleDateString()}
-                      </div>
-                    </td>
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                          submission.status === 'approved'
-                            ? 'bg-green-100 text-green-800'
-                            : submission.status === 'rejected'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}
-                      >
-                        {submission.status}
-                      </span>
-                    </td>
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                      <button
-                        onClick={() => setSelectedSubmission(submission._id ?? null)}
-                        className="text-blue-600 hover:underline text-sm"
-                      >
-                        View Details
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+      {/* Table */}
+      <div className="overflow-x-auto bg-white rounded-xl shadow-sm border">
+        <table className="w-full text-sm text-left">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wide">Form Name</th>
+              <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wide">Category</th>
+              <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wide">Submitted</th>
+              <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wide">Status</th>
+              <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wide">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {filteredSubmissions.map(submission => {
+              const form = getFormById(submission.formId);
+              return (
+                <tr key={submission._id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 font-medium text-gray-900">{submission.formName}</td>
+                  <td className="px-6 py-4">
+                    <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">
+                      {form?.category || 'Unknown'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-gray-700">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
+                      {new Date(submission.submittedAt).toLocaleDateString()}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`inline-block px-2 py-1 text-xs rounded-full font-medium ${
+                        submission.status === 'approved'
+                          ? 'bg-green-100 text-green-700'
+                          : submission.status === 'rejected'
+                          ? 'bg-red-100 text-red-700'
+                          : 'bg-yellow-100 text-yellow-700'
+                      }`}
+                    >
+                      {submission.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => submission._id && setSelectedSubmission(submission._id)}
+                      className="text-blue-600 hover:underline text-sm"
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
 
+      {/* No Submissions Message */}
       {filteredSubmissions.length === 0 && (
         <div className="text-center py-12">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Calendar className="w-8 h-8 text-gray-400" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No submissions found</h3>
+          <h3 className="text-lg font-semibold text-gray-900">No submissions found</h3>
           <p className="text-gray-500">
             {searchTerm || filterForm || statusSearchTerm
-              ? 'Try adjusting your search or filters'
-              : 'No form submissions yet'}
+              ? 'Try changing your search or filters'
+              : 'No submissions have been made yet.'}
           </p>
         </div>
       )}
 
+      {/* Modal */}
       {selectedSubmission && <SubmissionModal submissionId={selectedSubmission} />}
     </div>
   );

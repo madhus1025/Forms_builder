@@ -150,7 +150,7 @@ const FormBuilder: React.FC = () => {
 
   return (
     <div className="p-4 sm:p-6 max-w-full md:max-w-6xl mx-auto">
-      <div className="flex flex-wrap gap-3 justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center mb-6">
         <h2 className="text-xl sm:text-2xl font-bold">Create New Form</h2>
         <div className="flex flex-wrap gap-2">
           <button onClick={() => setShowPreview(!showPreview)} className="border px-4 py-2 rounded flex items-center">
@@ -165,7 +165,7 @@ const FormBuilder: React.FC = () => {
       </div>
 
       {!showPreview && (
-        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           <div className="space-y-4 w-full">
             <input
               type="text"
@@ -226,12 +226,14 @@ const FormBuilder: React.FC = () => {
                       onChange={(e) => setOptionInput(e.target.value)}
                       className="flex-1 border px-3 py-2 rounded"
                     />
-                    <button type="button" onClick={addOption} className="bg-green-500 text-white px-3 py-2 rounded w-full sm:w-auto">Add</button>
+                    <button type="button" onClick={addOption} className="bg-green-500 text-white px-3 py-2 rounded w-full sm:w-auto">
+                      Add
+                    </button>
                   </div>
                   <ul className="space-y-1">
                     {newField.options?.map((opt, idx) => (
-                      <li key={idx} className="flex justify-between border px-2 py-1 rounded">
-                        {opt}
+                      <li key={idx} className="flex justify-between items-center border px-2 py-1 rounded">
+                        <span>{opt}</span>
                         <button onClick={() => removeOption(idx)}><X className="w-4 h-4 text-red-500" /></button>
                       </li>
                     ))}
@@ -239,7 +241,7 @@ const FormBuilder: React.FC = () => {
                 </div>
               )}
 
-              <button onClick={addField} className="bg-blue-600 text-white px-4 py-2 rounded flex items-center">
+              <button onClick={addField} className="bg-blue-600 text-white px-4 py-2 rounded flex items-center w-full sm:w-auto">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Field
               </button>
@@ -248,8 +250,8 @@ const FormBuilder: React.FC = () => {
             {formData.fields && formData.fields.length > 0 && (
               <div className="border p-4 rounded space-y-2">
                 {formData.fields.map(f => (
-                  <div key={f.id} className="flex justify-between items-center border p-2 rounded">
-                    <span>{f.label}</span>
+                  <div key={f.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border p-2 rounded">
+                    <span className="font-medium text-sm text-gray-800">{f.label}</span>
                     <button onClick={() => removeField(f.id)}><X className="w-4 h-4 text-red-500" /></button>
                   </div>
                 ))}
